@@ -1,0 +1,4 @@
+export DJANGO_SETTINGS_MODULE='apps.settings_dev'
+export PYTHONPATH='/home/mark/dev/maxstrike/trunk'
+sed -i 's/^#from nose/from nose/g' test_*.py
+
