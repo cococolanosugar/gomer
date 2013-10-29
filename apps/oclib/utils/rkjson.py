@@ -34,7 +34,7 @@ def _dumps(obj, skipkeys=False, ensure_ascii=True, check_circular=True,
 #            return obj.strftime('%Y-%m-%d')
 #        else:
 #            raise TypeError('%r is not JSON serializable' % obj)
-    
+
 #    return json.dumps(obj, skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
 #                allow_nan=allow_nan, cls=cls, indent=indent, separators=separators,
 #                encoding=encoding, default=datetime_handler, **kw)

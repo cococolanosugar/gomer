@@ -2,13 +2,14 @@
 import os
 
 from bson import Code
+from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
 
 class Mongo(object):
 
-    def __init__(self, db, host='localhost', port=27017, username=None,
+    def __init__(self, db='', host='localhost', port=27017, username=None,
                  password=None, max_pool_size=10, document_class=dict,
                  tz_aware=True, **kwargs):
         self.host = os.getenv('MONGO_HOST', host)
@@ -32,13 +33,7 @@ class Mongo(object):
 
         connection_kwargs = self.__dict__
 
-        try:
-            self.conn = MongoClient(**connection_kwargs)
-        except ConnectionFailure:
-            print '***Connection Failure***'
-            print 'Switching to localhost'
-            self.host = 'localhost'
-            self.conn = MongoClient(self.__dict__)
+        self.conn = MongoClient(**connection_kwargs)
         self.db = self.conn[db]
 
     def __getattr__(self, name):
@@ -48,6 +43,8 @@ class Mongo(object):
         :type name: basestring
         """
         if name != "collection":
+            if name in ('conn', 'db'):
+                pass
             self.collection = self.db[name]
             return self
 
@@ -58,10 +55,12 @@ class Mongo(object):
         :type name: basestring
         """
         if name != "collection":
+            if name in ('conn', 'db'):
+                pass
             self.collection = self.db[name]
             return self
 
-    def get(self, pk, pk_value):
+    def get(self, pk, pk_value, **kwargs):
         """根据文件的pk去取文件
 
         db.collection.find_one( <query>, <projection> )
@@ -69,10 +68,19 @@ class Mongo(object):
         :param pk: 主键名  pk_value: 主键值
         :type pk: basestring pk_value: basestring
         """
-        query = {pk: pk_value}
-        return self.collection.find_one(query)
+        exclude_id = {'_id': False}
 
-    def find(self, query):
+        if pk == '_id':
+            pk_value = ObjectId(pk_value)
+
+        if 'fields' in kwargs:
+            if isinstance(kwargs['fields'], dict):
+                kwargs['fields'].update(exclude_id)
+
+        query = {pk: pk_value}
+        return self.collection.find_one(query, **kwargs)
+
+    def find(self, query, **kwargs):
         """普通查询
 
         db.collection.find( <query>, <projection> )
@@ -80,7 +88,12 @@ class Mongo(object):
         :param query: 查询条件
         :type query: dict
         """
-        return self.collection.find(query)
+        exclude_id = {'_id': False}
+        if 'fields' in kwargs:
+            if isinstance(kwargs['fields'], dict):
+                kwargs['fields'].update(exclude_id)
+
+        return self.collection.find(query, **kwargs)
 
     def delete(self, pk, pk_value):
         """根据文件的pk删除文件
@@ -102,8 +115,11 @@ class Mongo(object):
 
         :param data: 要存储的文件
         :type data: dict
+        :return: `_id` value or list of `_ids`
+        :rtype: str
         """
-        self.collection.insert(data)
+        docid = self.collection.insert(data)
+        return docid
 
     def update(self, pk, data):
         '''更新数据，如果找不到就新增
@@ -111,7 +127,21 @@ class Mongo(object):
         query = {pk: data[pk]}
         return self.collection.update(query, data, upsert=True)
 
-    def ensure_index(self, key_or_list, cache_for=300,
+    def drop_indexes(self):
+        return self.collection.drop_indexes()
+
+    def drop_index(self, idx):
+        return self.collection.drop_index(idx)
+
+    def create_index(self, key_or_list, cache_for=157784630, name=None,
+                     unique=False, **kwargs):
+        if name:
+            kwargs['name'] = name
+        kwargs['unique'] = unique
+        return self.collection.create_index(key_or_list, cache_for=cache_for,
+                                            **kwargs)
+
+    def ensure_index(self, key_or_list, cache_for=157784630,
                      name=None, unique=False, **kwargs):
         """确保某某index的存在
 
@@ -125,6 +155,7 @@ class Mongo(object):
                                 direction: pymongo.ASCENDING *OR* pymongo.DESCENDING
         :param cache_for: time window (in seconds) during which this index
                           will be recognized by subsequent calls to `ensure_index`
+                          value must be in seconds (default 5 years=157784630s)
         :type cache_for: int
         :param name: name of this index (default=None)
         :param unique: should this index guarantee uniqueness?
@@ -138,13 +169,30 @@ class Mongo(object):
         if name:
             kwargs['name'] = name
         kwargs['unique'] = unique
-        self.collection.ensure_index(key_or_list, cache_for=cache_for,
+        return self.collection.ensure_index(key_or_list, cache_for=cache_for,
                                      **kwargs)
 
-    def map_reduce(self, mapper, reduce, full_response=False, **kwargs):
+    def index_information(self):
+        """Get information about a collection's indexes"""
+        return self.collection.index_information()
+
+    def map_reduce(self, mapper, reducer, out, full_response=False, **kwargs):
         if isinstance(mapper, basestring):
             mapper = Code(mapper)
-        if isinstance(reduce, basestring):
-            reduce = Code(reduce)
-        self.collection.map_reduce(mapper, reduce,
-                                   full_response=full_response, **kwargs)
+        if isinstance(reducer, basestring):
+            reducer = Code(reducer)
+        return self.collection.map_reduce(mapper, reducer, out,
+                                          full_response=full_response, **kwargs)
+
+    def aggregate(self, mongo_statement):
+        """
+        Example:
+            db.collection.aggregate( {"$group": {"_id": "$status", "count": {"$sum": 1}}} )
+        Output:
+            {'ok': 1.0, 'result': [{'count': 3, '_id': 'inactive'}, {'count': 2, '_id': 'active'}]}
+
+        :param mongo_statement: a mongo aggregate statement
+        :type mongo_statement: dict/list/tuple
+        :return: a dictionary with keys "ok" and "result"
+        """
+        return self.collection.aggregate(mongo_statement)

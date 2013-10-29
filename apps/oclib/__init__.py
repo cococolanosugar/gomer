@@ -21,24 +21,45 @@ class App():
 class Pier(object):
     """用来临时存储等待保存到redis中的用户数据"""
     def __init__(self, store, use):
-        self.data = {}
+        self.put_data = {}
         self.store = store
+        self.get_data = {}
         self.use = use
 
     def add(self, user_model):
         uid = user_model.uid
-        self.data.setdefault(uid, [])
-        self.data[uid].append(user_model)
+        self.put_data.setdefault(uid, [])
+        if user_model not in self.put_data[uid]:
+            self.put_data[uid].append(user_model)
+        self.get_data.setdefault(uid, [])
+        if user_model not in self.get_data[uid]:
+            self.get_data[uid].append(user_model)
+    
+    def add_get_data(self, user_model):
+        uid = user_model.uid
+        self.get_data.setdefault(uid, [])
+        if user_model not in self.get_data[uid]:
+            self.get_data[uid].append(user_model)
 
     def save(self):
-        if not self.data:
+        if not self.put_data:
             return
-        for uid, um_list in self.data.iteritems():
+        for uid, um_list in self.put_data.iteritems():
             self.store.mset_user_model(uid, set(um_list))
-        self.data.clear()
+        self.clear()
 
     def clear(self):
-        self.data.clear()
+        self.put_data.clear()
+        self.get_data.clear()
+
+    def get(self, _class, uid):
+        um_list = self.get_data.get(uid)
+        if not um_list:
+            return None
+        for um in um_list:
+            if isinstance(um, _class):
+                return um
+        return None
 
 
 

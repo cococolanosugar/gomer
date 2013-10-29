@@ -21,7 +21,7 @@ import pycurl
 
 def _call(resource, method, data=None, headers=None, timeout=None, debug=None):
     """A lightweight wrapper around PycURL
-    
+
     Args:
         resource: resource to call, i. e. /a or /a/123/c
         method: one of: get, post, put, delete
@@ -29,7 +29,7 @@ def _call(resource, method, data=None, headers=None, timeout=None, debug=None):
         headers: http headers
         timeout: http connection timeout, second
         debug: pycurl debug info
-        
+
     Returns:
         code: http status code
         response: response data
@@ -37,19 +37,19 @@ def _call(resource, method, data=None, headers=None, timeout=None, debug=None):
     method = method.upper()
     handle = pycurl.Curl()
     output = StringIO()
-    
+
     handle.setopt(pycurl.URL, resource)
-    
+
     if isinstance(headers, dict):
-        handle.setopt(pycurl.HTTPHEADER, 
+        handle.setopt(pycurl.HTTPHEADER,
                       ['%s: %s' % (header, str(value)) for header, value in headers.iteritems()])
-    
+
     if isinstance(timeout, int):
         handle.setopt(pycurl.TIMEOUT, timeout)
-    
+
     if debug:
         handle.setopt(pycurl.VERBOSE, True)
-    
+
     if method == 'POST':
         handle.setopt(pycurl.POST, True)
         handle.setopt(pycurl.POSTFIELDS, data)
@@ -59,13 +59,13 @@ def _call(resource, method, data=None, headers=None, timeout=None, debug=None):
         handle.setopt(pycurl.READFUNCTION, input.read)
     elif method == 'DELETE':
         handle.setopt(pycurl.CUSTOMREQUEST, 'DELETE')
-    
+
     handle.setopt(pycurl.WRITEFUNCTION, output.write)
     handle.perform()
-    
+
     code = handle.getinfo(pycurl.RESPONSE_CODE)
     response = output.getvalue()
-    
+
     return code, response
 
 def get(resource, headers=None, timeout=None, debug=None):

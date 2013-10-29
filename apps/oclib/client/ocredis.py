@@ -275,3 +275,12 @@ class Redis(object):
         """
         return self.conn.spop(name)
 
+    def srem(self, name, *values):
+        """Removes one/many specific member in a set
+
+        :param name: name of set
+        :param *values: one/many members to remove from set
+        :return: number of members removed from set
+        :rtype: int
+        """
+        return self.conn.srem(name, *values)

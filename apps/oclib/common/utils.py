@@ -41,7 +41,7 @@ def random_int_choice(config, num = 10000):
     #thesum = reduce(operator.add, [item[0] for item in config], 0)
     #if thesum>1:
     #    raise Exception, 'config error'
-    
+
     mul = num/100
     r = random.randint(1,num)
     kk = 0
@@ -49,13 +49,13 @@ def random_int_choice(config, num = 10000):
         kk += item[0] * mul
         if r<=kk:
             return item[1]
-    
+
 def random_choice(config):
     #config = [(0.1, 20), (0.2, 30), (0.7, 40)]
     #thesum = reduce(operator.add, [item[0] for item in config], 0)
     #if thesum>1:
     #    raise Exception, 'config error'
-    
+
     r = random.random()
     kk = 0
     for item in config:
@@ -83,25 +83,25 @@ def random_range_multi(start, end, num, interval):
 
         select_num = random_range(select_start, select_end)
         res.append(select_num)
-    
+
     return res
 
 
 #str转化成datetime
-def str_to_datetime(datestr,format):      
-    return datetime.datetime.strptime(datestr,format)   
+def str_to_datetime(datestr,format):
+    return datetime.datetime.strptime(datestr,format)
 
 #两个时间间隔的天数
-def date_diff(begin_date,end_date):  
-    format="%Y-%m-%d";  
-    bd=str_to_datetime(begin_date,format)  
-    ed=str_to_datetime(end_date,format)      
-    oneday=datetime.timedelta(days=1)  
+def date_diff(begin_date,end_date):
+    format="%Y-%m-%d";
+    bd=str_to_datetime(begin_date,format)
+    ed=str_to_datetime(end_date,format)
+    oneday=datetime.timedelta(days=1)
     count=0
-    while bd!=ed:  
-        ed=ed-oneday  
+    while bd!=ed:
+        ed=ed-oneday
         count+=1
-    return count  
+    return count
 
 
 
@@ -114,12 +114,12 @@ def add2dict(d, k, v):
 
 #将两个字典的value合并成一个列表
 def merge_dict(d1, d2):
-    
+
     d3 = {}
     for k in d1:
         d2_value = d2[k] if d2.has_key(k) else 0
         d3[k] = [d1[k], d2_value]
-    
+
     return d3
 
 #将两个字典的key value 合并成一个字典
@@ -151,28 +151,28 @@ def print_err():
     sys.stderr.write('--'*30+os.linesep)
     traceback.print_exc(file=sys.stderr)
     sys.stderr.write('=='*30+os.linesep)
-    
+
 def utc_to_tz(utc_dt_str, utc_fmt='%Y-%m-%dT%H:%M:%SZ', tz=None):
     """
         将UTC时区的时间转换为当前时区的时间
         当前时区取django settings.py 中设置的时区
         如：在settings.py文件中的设置
         TIME_ZONE = 'Asia/Tokyo'
-        
+
         PARAMS:
             * utc_dt_str - utc时区时间，字符串类型。如：2010-01-14T07:00:20Z
             * utc_fmt - utc时区时间格式。如：%Y-%m-%dT%H:%M:%SZ
             * tz - 当前时区，如：Asia/Tokyo
-            
+
         RETURNS: tz_dt
     """
     if tz is None:
         tz = os.environ['TZ']
-    
+
     utc_fmt_dt = datetime.datetime.strptime(utc_dt_str, utc_fmt)
     utc_dt = datetime.datetime(utc_fmt_dt.year, utc_fmt_dt.month, utc_fmt_dt.day, utc_fmt_dt.hour, utc_fmt_dt.minute, utc_fmt_dt.second, tzinfo=pytz.utc)
     tz_dt = utc_dt.astimezone(pytz.timezone(tz))
-    
+
     return tz_dt
 
 
@@ -191,7 +191,7 @@ def gift_dict2list(rand_res):
                 for name in rand_res[scene_type][res_type]:
                     num = rand_res[scene_type][res_type][name]
                     return [scene_type, res_type, '', name, num]
-                    
+
             elif res_type in ['properties', 'decorations']:
                 for item_type in rand_res[scene_type][res_type]:
                     for name in rand_res[scene_type][res_type][item_type]:
@@ -199,8 +199,8 @@ def gift_dict2list(rand_res):
                         return [scene_type, res_type, item_type, name, num]
             else:
                 pass
-        
-def list2list(rand_res):     
+
+def list2list(rand_res):
     """
         整理列表，
         args:['farm', 'seeds', '', 'niuyouyumi', 1]
@@ -215,7 +215,7 @@ def gift_list2dict(goods_list):
     args:
         goods_list:    ---    like ['farm', 'properties', 'fertilizer', 'test', 1]
     returns:
-        0    ---    
+        0    ---
     """
     scene_type, category, goods_type, goods_name, give_num = goods_list
     if not goods_type:
@@ -223,7 +223,7 @@ def gift_list2dict(goods_list):
                 scene_type: {
                     category: {
                         goods_name: give_num,
-                    },  
+                    },
                 },
         }
     else:
@@ -233,9 +233,9 @@ def gift_list2dict(goods_list):
                         goods_type:{
                             goods_name: give_num,
                         }
-                    },  
+                    },
                 },
-        }    
+        }
     #}}}
 
 def gift_list2dict_multi(goods_lists):
@@ -243,7 +243,7 @@ def gift_list2dict_multi(goods_lists):
     args:
         goods_list:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     if not goods_lists:
         return []
@@ -309,7 +309,7 @@ def make_dict(goods_dict):
                 scene_type: {
                     category: {
                         goods_name: give_num,
-                    },  
+                    },
                 },
         }
     else:
@@ -319,7 +319,7 @@ def make_dict(goods_dict):
                         goods_type:{
                             goods_name: give_num,
                         }
-                    },  
+                    },
                 },
         }
     #}}}
@@ -340,18 +340,18 @@ def make_image_addr(scene_type, category, goods_key, goods_type=''):
     """#{{{ make_image_addr: 用户生成种子，花，farm收获物，ranch收获物，化肥，饲料的
                                 图片地址
     args:
-        scene_type      ---    场景类型，'farm', 'ranch' 
+        scene_type      ---    场景类型，'farm', 'ranch'
         category        ---    类别，'seeds', 'babies', 'property', 'harvest'
-        goods_key       ---    产品的英文key 
+        goods_key       ---    产品的英文key
         goods_type      ---    子类，'flower', 'fertilizer', 'feedstuffs'
     returns:
-        图片地址    
+        图片地址
     """
 
     type = goods_type or category
     pic =  ''.join([
                     'assets/images/item/',
-                    addr_dict.get(scene_type+'_'+type, 'seed/'), 
+                    addr_dict.get(scene_type+'_'+type, 'seed/'),
                     goods_key,
                     '.swf'
                 ])
@@ -391,18 +391,18 @@ def get_goods_info(scene_type, category, goods_type, goods_key):
 def get_date_str(dt = None):
     if dt is None:
         dt = datetime.datetime.now()
-    
+
     return dt.strftime('%Y-%m-%d')
-    
+
 def parse_date_str(date_str,format="%Y-%m-%d"):
     d = datetime.datetime.strptime(date_str,format)
-    
+
     return d
 
 def get_time_str(dt = None):
     if dt is None:
         dt = datetime.datetime.now()
-    
+
     return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 def get_time_str2(t):
@@ -410,7 +410,7 @@ def get_time_str2(t):
     args:
         t:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     t2 = time.localtime(t)
     return time.strftime('%Y-%m-%d %H:%M:%S', t)
@@ -443,7 +443,7 @@ def dec2s2(dec):
     args:
         dec:    ---    10进制数
     returns:
-        0    ---    
+        0    ---
     """
     dec = int(dec)
     numbers = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -461,7 +461,7 @@ def s22dec(s2):
     args:
         s2:    ---    62位数
     returns:
-        0    ---    
+        0    ---
     """
     numbers = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     result = 0
@@ -482,7 +482,7 @@ def make_key(i):
     args:
         i:    ---    int
     returns:
-        62位数字, 字符串   
+        62位数字, 字符串
     """
     import time, uuid
     i = abs(int(i))
@@ -497,7 +497,7 @@ def make_key(i):
 def print_(msg='', mark='', need_locals=True):
     from django.conf import settings
     if not getattr(settings, 'DEBUG', False):
-        return    
+        return
     frame = sys._getframe().f_back
     fc = frame.f_code
     pre_frame = frame.f_back
@@ -513,46 +513,46 @@ def print_(msg='', mark='', need_locals=True):
 def pycurl_get(url, timeout_ms = 3000, headers = [], verbose = 0):
     """
         pycurl HTTP GET 请求
-        
+
         timeout_ms - 超时时间，微妙
         headers - HTTP HEADER 信息
         verbose - 0：打印请求信息；1：不打印请求信息
     """
     write_func = cStringIO.StringIO()
-    
+
     curl = pycurl.Curl()
-    
+
     curl.setopt(pycurl.URL, url)
     curl.setopt(curl.WRITEFUNCTION, write_func.write)
     curl.setopt(pycurl.VERBOSE, verbose)
     curl.setopt(pycurl.TIMEOUT_MS, timeout_ms)
     curl.setopt(pycurl.FOLLOWLOCATION, 1)
     curl.setopt(pycurl.MAXREDIRS, 5)
-    
+
     if headers is not None and len(headers) > 0:
         curl.setopt(pycurl.HTTPHEADER, headers)
-    
+
     curl.perform()
-    
+
     data = {}
     data['http_status_code'] = curl.getinfo(pycurl.HTTP_CODE)
     data['response'] = write_func.getvalue()
-    
+
     return data
-    
+
 def pycurl_post(url, post_data, timeout_ms = 3000, headers = [], verbose = 0):
     """
         pycurl HTTP POST 请求
-        
+
         post_data - post 数据，字典类型
         timeout_ms - 超时时间，微妙
         headers - HTTP HEADER 信息
         verbose - 0：打印请求信息；1：不打印请求信息
     """
     write_func = cStringIO.StringIO()
-    
+
     curl = pycurl.Curl()
-    
+
     curl.setopt(pycurl.URL, url)
     curl.setopt(pycurl.POST, 1)
     curl.setopt(pycurl.POSTFIELDS, urllib.urlencode(post_data))
@@ -561,16 +561,16 @@ def pycurl_post(url, post_data, timeout_ms = 3000, headers = [], verbose = 0):
     curl.setopt(pycurl.TIMEOUT_MS, timeout_ms)
     curl.setopt(pycurl.FOLLOWLOCATION, 1)
     curl.setopt(pycurl.MAXREDIRS, 5)
-    
+
     if headers is not None and len(headers) > 0:
         curl.setopt(pycurl.HTTPHEADER, headers)
-    
+
     curl.perform()
-    
+
     data = {}
     data['http_status_code'] = curl.getinfo(pycurl.HTTP_CODE)
     data['response'] = write_func.getvalue()
-    
+
     return data
 
 
@@ -587,9 +587,9 @@ def make_feed_finaldata(sessionid, feed_data):
     result['mobileUrl'] = feed_data.get('mb_url', '')
     result['url'] = feed_data.get('pc_url', '')
     callback_url = settings.BASEURL + '/m/common_feed_callback/?sessionid=%s&ft=%s&%s'\
-                                        % ( 
-                                            sessionid, 
-                                            feed_data['opt_callback'].get('ft','None'), 
+                                        % (
+                                            sessionid,
+                                            feed_data['opt_callback'].get('ft','None'),
                                             feed_data['opt_callback'].get('mb_callback_url','')
                                           )
     result['callback_Url'] = "create:activity?callback=%s&guid=ON" % (urllib.quote(callback_url))
@@ -602,7 +602,7 @@ def make_request_finaldata(sessionid, feed_data):
     args:
         data:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     result = {}
     result['message'] = feed_data.get('message', '')
@@ -613,9 +613,9 @@ def make_request_finaldata(sessionid, feed_data):
     result['mobile_url'] = feed_data['opt_params'].get('mobile_url', '')
     result['url'] = feed_data['opt_params'].get('url', '')
     callback_url = settings.BASEURL + '/m/common_feed_callback/?sessionid=%s&ft=%s&%s'\
-                                        % ( 
-                                            sessionid, 
-                                            feed_data['opt_callback'].get('ft','None'), 
+                                        % (
+                                            sessionid,
+                                            feed_data['opt_callback'].get('ft','None'),
                                             feed_data['opt_callback'].get('mb_callback_url','')
                                           )
     result['post_url'] = "invite:friends?callback=%s&guid=ON" % (urllib.quote(callback_url))
@@ -628,7 +628,7 @@ def make_request_finaldata2(sessionid, feed_data):
     args:
         data:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     result = {}
     result['message'] = feed_data.get('message', '')
@@ -640,9 +640,9 @@ def make_request_finaldata2(sessionid, feed_data):
     result['url'] = feed_data['opt_params'].get('url', '')
     result['target_users'] = ','.join(feed_data['opt_params'].get('target', []))
     callback_url = settings.BASEURL + '/m/common_feed_callback2/?sessionid=%s&ft=%s&real_owner=%s&request_key=%s'\
-                                        % ( 
-                                            sessionid, 
-                                            feed_data['opt_callback'].get('ft','None'), 
+                                        % (
+                                            sessionid,
+                                            feed_data['opt_callback'].get('ft','None'),
                                             feed_data['opt_params'].get('real_owner',''),
                                             feed_data['opt_params'].get('request_key',''),
                                           )
@@ -681,10 +681,10 @@ def request_share_template_handler2(method, self_name, url_params, feed_template
         message         --- str,  要显示的文字信息
         image           --- str,  图片地址，从static/images/以下开始
     returns:
-        0    ---    
+        0    ---
     """
     data = {'self': self_name}
-    
+
     # 当key(title)不存在时，默认返回 ${none_title}
     # 在template替换(title_template.substitute)时抛出KeyError异常，返回None
     title = feed_template.get('title', '${none_title}')
@@ -721,7 +721,7 @@ def request_share_template_handler2(method, self_name, url_params, feed_template
     data['pc_url_params'] = urllib.quote(pc_url_params)
     pc_url = 'http://mixi.jp/run_appli.pl?id=%s&appParams=${pc_url_params}' % (settings.APP_ID)
     pc_url_template = string.Template(pc_url)
-    #}}} 
+    #}}}
     opt_callback = feed_template.get('opt_callback',{})
     opt_callback['ft'] = method
     opt_callback['pc_callback_url'] = opt_callback['mb_callback_url'] = '&'.join([
@@ -758,14 +758,14 @@ def request_share_template_handler(method, self_name, url_params=None, message=N
         message         --- str,  要显示的文字信息
         image           --- str,  图片地址，从static/images/以下开始
     returns:
-        0    ---    
+        0    ---
     """
     from farm_lib.logics import common_config
     if method not in common_config.feed_send:
         return None
     feed_template = copy.deepcopy(common_config.feed_send.get(method, {}))
     data = {'self': self_name}
-    
+
     # 当key(title)不存在时，默认返回 ${none_title}
     # 在template替换(title_template.substitute)时抛出KeyError异常，返回None
     title = feed_template.get('title', '${none_title}')
@@ -823,19 +823,19 @@ def request_share_template_handler(method, self_name, url_params=None, message=N
     #}}}
 
 
-def feed_template_handler(method, self_name, friend_name=None, message=None, 
+def feed_template_handler(method, self_name, friend_name=None, message=None,
                           url_params=None):
     """feed模板处理器
-    
+
     将feed模板中配置的${self}, ${friend}, ${message}替换为实际需要的内容
-    
+
     Args:
         method: 需要发送feed动作，如task.everyday_login, gift.send_gift等
         self_name: 当前登录用户名称
         friend_name: 交互好友名称
         message: 动态的提示信息，如获得了某某种子等
         url_params: feed url参数，字典类型。约定：key为参数名，value为参数值
-        
+
     Returns:
         返回处理后的feed信息，类型为字典。如：
         {
@@ -846,34 +846,34 @@ def feed_template_handler(method, self_name, friend_name=None, message=None,
     from farm_lib.logics import common_config
     if method not in common_config.feed_send:
         return None
-    
+
     feed_template = copy.deepcopy(common_config.feed_send.get(method, {}))
-    
+
     # 当key(title)不存在时，默认返回 ${none_title}
     # 在template替换(title_template.substitute)时抛出KeyError异常，返回None
     title = feed_template.get('title', '${none_title}')
-    
+
     title_template = string.Template(title)
-    
+
     data = {'self': self_name}
-    
+
     if friend_name is not None:
         data['friend'] = friend_name
-        
+
     if message is not None:
         data['message'] = message
 
     if url_params is None:
         url_params = {}
-    
+
     feed_data = {}
-    
+
     try:
        feed_data['title'] = title_template.substitute(data)
     except KeyError:
         print_err()
         return None
-    
+
     # pc_url, mb_url
     if url_params is not None and isinstance(url_params, dict) \
         and 'pc_url' in feed_template and 'mb_url' in feed_template:
@@ -893,51 +893,51 @@ def feed_template_handler(method, self_name, friend_name=None, message=None,
             mb_str += '$$'
         mb_str = mb_str[:-2]
         url_params = {'para':mb_str}
-                
+
         pc_params["ft"] = method
         pc_url_params = json.dumps(pc_params)
-        
+
         data['pc_url_params'] = urllib.quote(pc_url_params)
         data['mobile_url_params'] = urllib.quote(urllib.urlencode(url_params))
 
         pc_url = 'http://mixi.jp/run_appli.pl?id=%s&appParams=${pc_url_params}' % (settings.APP_ID)
         pc_url_template = string.Template(pc_url)
-        
+
         temp_url = settings.BASEURL + '/m/common_feed_click/?'
         mb_url = 'http://ma.mixi.net/%s/?url=%s${mobile_url_params}' % (settings.APP_ID,urllib.quote(temp_url))
         mb_url_template = string.Template(mb_url)
-        
+
         try:
             feed_data['pc_url'] = pc_url_template.substitute(data)
             feed_data['mb_url'] = mb_url_template.substitute(data)
         except KeyError:
             print_err()
             return None
-    
+
     if 'image' in feed_template:
         feed_data['image'] = feed_template.get('image')
-        
+
     if 'priority' in feed_template:
         feed_data['priority'] = feed_template.get('priority')
-        
+
     feed_data['opt_callback'] = feed_template.get('opt_callback',{})
     feed_data['opt_callback']['ft'] = method
-    
+
     return feed_data
 
-def operate_feed_template_handler(method, self_name, friend_name=None, params=None, message=None, 
+def operate_feed_template_handler(method, self_name, friend_name=None, params=None, message=None,
                           url_params=None):
     """操作类feed模板处理器
-    
+
     将feed模板中配置的${self}, ${friend}, ${message}替换为实际需要的内容
-    
+
     Args:
         method: 需要发送feed动作，如land.seed等
         self_name: 当前登录用户名称
         friend_name: 交互好友名称
         message: 动态的提示信息，如获得了某某种子等
         url_params: feed url参数，字典类型。约定：key为参数名，字符串类型；value为参数值，字符串类型
-        
+
     Returns:
         返回处理后的feed信息，类型为字典。如：
         {
@@ -950,40 +950,40 @@ def operate_feed_template_handler(method, self_name, friend_name=None, params=No
         good_type = params.get('crop_type')
     else:
         good_type = params.get('type')
-    
+
     from farm_lib.logics import common_config
     if method not in common_config.feed_send:
         return None
-       
+
     good_feed_config = common_config.feed_send[method].get(good_type, None)
     if good_feed_config is None:
         return None
     feed_template = copy.deepcopy(good_feed_config)
-    
+
     # 当key(title)不存在时，默认返回 ${none_title}
     # 在template替换(title_template.substitute)时抛出KeyError异常，返回None
     title = feed_template.get('title', '${none_title}')
     title_template = string.Template(title)
-    
+
     data = {'self': self_name}
-    
+
     if friend_name is not None:
         data['friend'] = friend_name
-        
+
     if message is not None:
         data['message'] = message
-        
+
     if url_params is None:
         url_params = {}
-    
+
     feed_data = {}
-    
+
     try:
         feed_data['title'] = title_template.substitute(data)
     except KeyError:
         print_err()
         return None
-    
+
     # pc_url, mb_url
     if url_params is not None and isinstance(url_params, dict) \
         and 'pc_url' in feed_template and 'mb_url' in feed_template:
@@ -1001,37 +1001,37 @@ def operate_feed_template_handler(method, self_name, friend_name=None, params=No
             mb_str += '$$'
         mb_str = mb_str[:-2]
         mb_params = {'para':mb_str}
-        
+
         if not url_params.get("method"):
             url_params["method"] = feed_template.get('method','')
         pc_url_params = json.dumps(url_params)
-        
+
         data['pc_url_params'] = urllib.quote(pc_url_params)
         data['mobile_url_params'] = urllib.quote(urllib.urlencode(mb_params))
-    
+
         pc_url = 'http://mixi.jp/run_appli.pl?id=%s&appParams=${pc_url_params}' % (settings.APP_ID)
         pc_url_template = string.Template(pc_url)
-        
+
         temp_url = settings.MOBILE_BASEURL + '/m/common_feed_click/?'
         mb_url = 'http://ma.mixi.net/%s/?url=%s${mobile_url_params}' % (settings.APP_ID,urllib.quote(temp_url))
         mb_url_template = string.Template(mb_url)
-        
+
         try:
             feed_data['pc_url'] = pc_url_template.substitute(data)
             feed_data['mb_url'] = mb_url_template.substitute(data)
         except KeyError:
             print_err()
             return None
-    
+
     if 'image' in feed_template:
         feed_data['image'] = feed_template.get('image')
-        
+
     if 'priority' in feed_template:
         feed_data['priority'] = feed_template.get('priority')
-        
+
     feed_data['opt_callback'] = feed_template.get('opt_callback',{})
     feed_data['opt_callback']['ft'] = method
-    
+
     return feed_data
 
 def debug_output(func):
@@ -1040,7 +1040,7 @@ def debug_output(func):
     args:
         func:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     def debug(*args, **kwargs):
         if settings.DEBUG:
@@ -1058,7 +1058,7 @@ def float_calc(s):
     args:
         s:    ---    arg
     returns:
-        0    ---    
+        0    ---
     """
     for i in ['+','-','*','/']:
         s = s.replace(i, '))'+i+'decimal.Decimal(str(')

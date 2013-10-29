@@ -11,10 +11,6 @@ from apps.oclib.model import TopModel
 from apps.oclib.model import MongoModel
 from apps.oclib import app
 
-def assert_is_instance(obj, obj_type):
-    if not isinstance(obj, obj_type):
-        raise AssertionError
-
 class User(UserModel):
     pk = 'uid'
     fields = ['uid','data']
@@ -45,7 +41,7 @@ class Tmp(TmpModel):
     @classmethod
     def create(cls, pid, uid, data):
         t = cls()
-        t.uid = uid 
+        t.uid = uid
         t.pid = pid
         t.data = data
         return t
@@ -56,7 +52,7 @@ class Log(LogModel):
     def create(cls, time, uid, pid, url, api):
         l = cls()
         l.time = time
-        l.uid = uid 
+        l.uid = uid
         l.pid = pid
         l.url = url
         l.api = api
@@ -69,18 +65,58 @@ class Admin(MongoModel):
     @classmethod
     def create(cls, uid, name, password, mail):
         a = cls()
-        a.uid = uid 
+        a.uid = uid
         a.name = name
         a.password = password
-        a.mail = mail 
+        a.mail = mail
         return a
+
+
+class AdminTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.admin = Admin.create(123456, 'mark.huang', 'abc123', 'mark.huang@newsnsgame.com')
+        self.george = Admin.create(123455, 'xu.shicai', 'abc123', 'xu.shicai@newsnsgame.com')
+        self.admin.put()
+        self.george.put()
+
+    def test_put(self):
+        new_user = Admin.create(123457, 'liyuan', 'abc123', 'liyuan@newsnsgame.com')
+        new_user.put()
+        liyuan_class = Admin.get(123457)
+        assert_is_instance(liyuan_class, Admin)
+        eq_(liyuan_class.mail, 'liyuan@newsnsgame.com')
+        eq_(liyuan_class.uid, 123457)
+        new_user.delete()
+
+        admin_class = Admin.get(123456)
+        eq_(admin_class.uid, self.admin.uid)
+        eq_(admin_class.mail, self.admin.mail)
+        eq_(admin_class.name, self.admin.name)
+        eq_(admin_class.password, self.admin.password)
+
+    def test_find(self):
+        query = {"password": 'abc123'}
+        admin_list = Admin.find(query)
+        expected_length = 2
+        eq_(len(admin_list), expected_length)
+
+        query = {"mail": "mark.huang@newsnsgame.com"}
+        admin_list = Admin.find(query)
+        expected_length = 1
+        eq_(len(admin_list), expected_length)
+
+    def tearDown(self):
+        self.admin = None
+        app.mongo_store.mongo.db.drop_collection('admin')
 
 
 class ConfigTestCase(unittest.TestCase):
     def setUp(self):
         self.config = Config.create("card_config", {"a": 0, "b": 1})
         self.config.put()
-        self.redis = Redis()
+        for i, v in enumerate(app.redis_store.redis_list):
+            setattr(self, 'redis%s' % (i), v)
 
     def test_get(self):
         the_config = Config.get('card_config')
@@ -105,15 +141,17 @@ class ConfigTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.config = None
-        self.redis.conn.flushdb()
-        self.redis = None
+        self.redis0.conn.flushdb()
+        self.redis1.conn.flushdb()
+        self.redis2.conn.flushdb()
 
 
 class UserTestCase(unittest.TestCase):
 
     def setUp(self):
         self.user = User.create()
-        #self.redis = Redis()
+        for i, v in enumerate(app.redis_store.redis_list):
+            setattr(self, 'redis%s' % (i), v)
 
     def test_uid(self):
         uid = self.user.uid
@@ -131,22 +169,23 @@ class UserTestCase(unittest.TestCase):
         assert_is_instance(self.user, BaseModel)
 
     def test_put_operation(self):
-        result = self.user.put()
+        result = self.user.do_put()
         assert_is_instance(result, int)
         eq_(result, 1)
 
     def test_get_operation(self):
-        result = self.user.put()
+        result = self.user.do_put()
         assert_is_instance(result, int)
         eq_(result, 1)
 
-        user = UserModel.get(self.user.uid)
+        user = User.get(self.user.uid)
         eq_(user.uid, self.user.uid)
 
     def tearDown(self):
         self.user = None
-        self.redis.conn.flushdb()
-        self.redis = None
+        self.redis0.conn.flushdb()
+        self.redis1.conn.flushdb()
+        self.redis2.conn.flushdb()
 
 
 class TmpModelTestCase(unittest.TestCase):
@@ -219,6 +258,8 @@ def suite():
     suite = unittest.TestSuite()
     suite.addTest(UserModelTestCase())
     suite.addTest(ConfigTestCase())
+    suite.addTest(TopModelTestCase())
+    suite.addTest(AdminTestCase())
     return suite
 
 if __name__ == '__main__':

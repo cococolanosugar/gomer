@@ -3,7 +3,7 @@ import datetime
 from apps.oclib import app
 
 GAME_UID_KEY = 'oneclickgameuidkey'
-GAME_START_DATE = datetime.datetime(2013,1,1)
+GAME_START_DATE = datetime.datetime(2013,9,1)
 GAME_UID_MIN = 123321
 
 def next_uid(app_id='', plat_id=''):

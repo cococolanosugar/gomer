@@ -45,30 +45,39 @@ class BaseModel(object):
             obj_dict[field] = getattr(self,field)
         return obj_dict
 
+
 class UserModel(BaseModel):
     """用户个人的数据 一般只允许自己读写自己的 pk都是uid"""
-    
+
     pk = 'uid'
     fields = []
 
     @classmethod
     def get(cls, uid):
         uid = str(uid)
-        obj = app.redis_store.get_user_model(cls, uid)
+        obj = app.pier.get(cls, uid)
+        if not obj:
+            obj = app.redis_store.get_user_model(cls, uid)
         if not obj:
             obj = app.mongo_store.get(cls, uid)
+        if obj and app.pier.use:
+            app.pier.add_get_data(obj)
         return obj
 
     def do_put(self):
         return app.redis_store.set_user_model(self)
 
+    def delete(self):
+        app.redis_store.delete_user_model(self)
+        app.mongo_store.delete(self)
+
     def put(self):
         if app.pier.use:
             app.pier.add(self)
         else:
-            self.do_put(self)
-        
-        
+            self.do_put()
+
+
 class TmpModel(BaseModel):
     """
     存储临时数据
@@ -84,7 +93,7 @@ class TmpModel(BaseModel):
     def put(self, ex=None):
         if not ex:
             ex = self.ex
-        return app.redis_store.set(self, ex)
+        return app.redis_store.set(self, ex, False)
 
     def delete(self):
         return app.redis_store.delete(self)
@@ -114,7 +123,7 @@ class LogModel(object):
     """
     存储log数据 写一次后基本不修改 有查询需求
     """
-    
+
     #创建一个新的model 请在子类中实现
     @classmethod
     def create(cls):
@@ -126,6 +135,10 @@ class LogModel(object):
     @classmethod
     def find(cls, query):
         return app.log_mongo.find(cls,query)
+
+    @classmethod
+    def aggregate(cls, statement):
+        return app.log_mongo.aggregate(cls,statement)
 
     @classmethod
     def load(cls, data):
