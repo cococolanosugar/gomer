@@ -1,10 +1,11 @@
 #-*- coding: utf-8 -*-
 import datetime
 from apps.oclib import app
+from django.conf import settings
 
-GAME_UID_KEY = 'oneclickgameuidkey'
-GAME_START_DATE = datetime.datetime(2013,9,1)
-GAME_UID_MIN = 123321
+GAME_UID_KEY = settings.GAME_UID_KEY
+GAME_START_DATE = datetime.datetime.strptime(settings.GAME_START_DATE, '%Y-%m-%d')
+GAME_UID_MIN = settings.GAME_UID_MIN
 
 def next_uid(app_id='', plat_id=''):
 
@@ -26,5 +27,5 @@ def next_uid(app_id='', plat_id=''):
     nls.reverse()
     seq = ''.join(nls)
 
-    uid = '%s%s%s%s' % (app_id, plat_id, seq, days)
+    uid = '%s%s%s%s' % (app_id, plat_id, days, seq)
     return uid

@@ -87,13 +87,11 @@
             },
             {
                 'index': 'uid',
-                'unique': True
             },
         ],
 
     },
     'log_mongodb': {
-        #充值记录
         'chargerecord': [
             {
                 'index': 'oid',
@@ -109,7 +107,6 @@
                 'index': 'createtime'
             }
         ],
-        #消费记录
         'consumerecord': [
             {
                 'index': 'uid',
@@ -121,7 +118,6 @@
                 'index': 'createtime'
             }
         ],
-
 
     }
 }

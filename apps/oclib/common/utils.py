@@ -1,17 +1,14 @@
 #-*- coding: utf-8 -*-
 import random
-import operator
-import traceback, sys, cStringIO, os
+import traceback, sys, cStringIO
 import datetime, time
 from cgi import parse_qsl
-import cPickle as pickle
-import socket
 import os
 import urllib
 import copy
 import string
 
-import pytz
+#import pytz
 import pycurl
 
 import json
@@ -152,28 +149,28 @@ def print_err():
     traceback.print_exc(file=sys.stderr)
     sys.stderr.write('=='*30+os.linesep)
 
-def utc_to_tz(utc_dt_str, utc_fmt='%Y-%m-%dT%H:%M:%SZ', tz=None):
-    """
-        将UTC时区的时间转换为当前时区的时间
-        当前时区取django settings.py 中设置的时区
-        如：在settings.py文件中的设置
-        TIME_ZONE = 'Asia/Tokyo'
-
-        PARAMS:
-            * utc_dt_str - utc时区时间，字符串类型。如：2010-01-14T07:00:20Z
-            * utc_fmt - utc时区时间格式。如：%Y-%m-%dT%H:%M:%SZ
-            * tz - 当前时区，如：Asia/Tokyo
-
-        RETURNS: tz_dt
-    """
-    if tz is None:
-        tz = os.environ['TZ']
-
-    utc_fmt_dt = datetime.datetime.strptime(utc_dt_str, utc_fmt)
-    utc_dt = datetime.datetime(utc_fmt_dt.year, utc_fmt_dt.month, utc_fmt_dt.day, utc_fmt_dt.hour, utc_fmt_dt.minute, utc_fmt_dt.second, tzinfo=pytz.utc)
-    tz_dt = utc_dt.astimezone(pytz.timezone(tz))
-
-    return tz_dt
+#def utc_to_tz(utc_dt_str, utc_fmt='%Y-%m-%dT%H:%M:%SZ', tz=None):
+#    """
+#        将UTC时区的时间转换为当前时区的时间
+#        当前时区取django settings.py 中设置的时区
+#        如：在settings.py文件中的设置
+#        TIME_ZONE = 'Asia/Tokyo'
+#
+#        PARAMS:
+#            * utc_dt_str - utc时区时间，字符串类型。如：2010-01-14T07:00:20Z
+#            * utc_fmt - utc时区时间格式。如：%Y-%m-%dT%H:%M:%SZ
+#            * tz - 当前时区，如：Asia/Tokyo
+#
+#        RETURNS: tz_dt
+#    """
+#    if tz is None:
+#        tz = os.environ['TZ']
+#
+#    utc_fmt_dt = datetime.datetime.strptime(utc_dt_str, utc_fmt)
+#    utc_dt = datetime.datetime(utc_fmt_dt.year, utc_fmt_dt.month, utc_fmt_dt.day, utc_fmt_dt.hour, utc_fmt_dt.minute, utc_fmt_dt.second, tzinfo=pytz.utc)
+#    tz_dt = utc_dt.astimezone(pytz.timezone(tz))
+#
+#    return tz_dt
 
 
 def gift_dict2list(rand_res):
@@ -1067,11 +1064,11 @@ def float_calc(s):
     #}}}
 
 
-def send_udp(server, data, is_dumped=True):
-    udp_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    if is_dumped:
-        data = pickle.dumps(data)
-    udp_client.sendto(data, server)
+#def send_udp(server, data, is_dumped=True):
+#    udp_client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#    if is_dumped:
+#        data = pickle.dumps(data)
+#    udp_client.sendto(data, server)
 
 def _parse_backend_uri(backend_uri):
     """

@@ -167,6 +167,17 @@ class RedisTestCase(unittest.TestCase):
         self.r.conn.flushdb()
         self.r = None
 
+    def test_srem(self):
+        s1 = self.r.srem("tomongo", "James")
+        expected = 1
+        eq_(s1, expected)
+        eq_(self.r.scard("tomongo"), 3)
+
+        s2 = self.r.srem("tomongo", "Mark", "Rendy")
+        expected = 2
+        eq_(s2, expected)
+        eq_(self.r.scard("tomongo"), 1)
+
 
 def suite():
     suite = unittest.TestSuite()

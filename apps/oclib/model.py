@@ -19,6 +19,8 @@ class BaseModel(object):
         obj = app.redis_store.get(cls, pk)
         if not obj:
             obj = app.mongo_store.get(cls, pk)
+            if obj:
+                obj.put()
         return obj
 
     def put(self):
@@ -60,6 +62,8 @@ class UserModel(BaseModel):
             obj = app.redis_store.get_user_model(cls, uid)
         if not obj:
             obj = app.mongo_store.get(cls, uid)
+            if obj:
+                obj.do_put()
         if obj and app.pier.use:
             app.pier.add_get_data(obj)
         return obj
@@ -115,9 +119,11 @@ class MongoModel(BaseModel):
         return app.mongo_store.delete(self)
 
     @classmethod
-    def find(cls, query):
-        return app.mongo_store.find(cls,query)
-
+    def find(cls, query,**kwargs):
+        return app.mongo_store.find(cls,query,**kwargs)
+    
+    def insert(self):
+        return app.mongo_store.insert(self)
 
 class LogModel(object):
     """

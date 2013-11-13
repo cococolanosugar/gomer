@@ -90,7 +90,8 @@ class StorageRedis(Storage):
 
 class StorageMongo(Storage):
     def __init__(self, config):
-        self.mongo = Mongo(config['db'], host=config['host'], port=config['port'])
+        self.mongo = Mongo(config['db'], host=config['host'], port=config['port'], \
+                           username=config['username'],password=config['password'])
 
     def get(self, _class, pk_value):
         collection = _class.__name__.lower()
@@ -107,9 +108,9 @@ class StorageMongo(Storage):
         collection = obj.__class__.__name__.lower()
         return self.mongo[collection].insert(obj.__dict__)
 
-    def find(self, _class, query):
+    def find(self, _class, query,**kwargs):
         collection = _class.__name__.lower()
-        data_list = self.mongo[collection].find(query)
+        data_list = self.mongo[collection].find(query,**kwargs)
         if data_list:
             return [_class.load(data) for data in data_list]
         return None
@@ -135,7 +136,10 @@ class StorageMongo(Storage):
 
     def delete(self, obj):
         collection = obj.__class__.__name__.lower()
-        return self.mongo[collection].delete(obj.pk, str(getattr(obj, obj.pk)))
+        val = getattr(obj, obj.pk)
+        if not isinstance(val,unicode):
+            val = str(val)
+        return self.mongo[collection].delete(obj.pk, val)
 
     def aggregate(self, _class, statement):
         """

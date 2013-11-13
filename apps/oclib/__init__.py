@@ -63,4 +63,4 @@ class Pier(object):
 
 
 
-app = App(settings.STORAGE_CONFIG)
+app = App(settings.STORAGE_CONFIG[settings.STORAGE_INDEX])

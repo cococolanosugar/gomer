@@ -59,18 +59,34 @@ MONGODB = {
     },
     'prod': {
         'mongodb': {
-            'host': '10.200.55.32',
+            'host': '10.6.2.9',
             'port': 27017,
-            'db': 'maxstrike_prd',
-            'username': '',
-            'password': ''
+            'db': 'cnmaxstrikedb1a',
+            'username': 'cnmaxstrikeuser1a',
+            'password': 'cnmaxstrikeuPwD1a0%'
         },
         'log_mongodb': {
-            'host': '10.200.55.32',
+            'host': '10.6.2.9',
             'port': 27017,
-            'db': 'maxstrike_prd_log',
-            'username': '',
-            'password': ''
+            'db': 'logcnmaxstrikedb1a',
+            'username': 'logcnmaxstrikeuser1a',
+            'password': 'logcnmaxstrikeuPWd10a%'
+        }
+    },
+    'appstore_prod': {
+        'mongodb': {
+            'host': '172.31.25.6',
+            'port': 27017,
+            'db': 'awsmaxstrikedb1a',
+            'username': 'awsmaxstrikeuser1a',
+            'password': 'awsmaxstrikeuPwD1ao%'
+        },
+        'log_mongodb': {
+            'host': '172.31.25.6',
+            'port': 27017,
+            'db': 'logawsmaxstrikedb1a',
+            'username': 'logawsmaxstrikeuser1a',
+            'password': 'logawsmaxstrikeuPWd1oa%'
         }
     }
 }
@@ -139,10 +155,10 @@ def init_parser(description):
         description=textwrap.dedent(description))
     parser.add_argument('target',
                         type=str,
-                        choices=['dev', 'qa', 'prod'],
+                        choices=['dev', 'qa', 'prod','appstore_prod'],
                         nargs='+',
                         default='dev',
-                        help='建索引的目标服务器: dev=localhost, qa=测试服务器, prod=发布服务器'
+                        help='建索引的目标服务器: dev=localhost, qa=测试服务器, prod=发布服务器, appstore_prod=appstore发布服务器'
                         )
     parser.add_argument('-f',
                         '--file',

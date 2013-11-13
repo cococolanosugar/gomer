@@ -12,8 +12,8 @@ class Mongo(object):
     def __init__(self, db='', host='localhost', port=27017, username=None,
                  password=None, max_pool_size=10, document_class=dict,
                  tz_aware=True, **kwargs):
-        self.host = os.getenv('MONGO_HOST', host)
-        self.port = os.getenv('MONGO_PORT', port)
+        self.host = host#os.getenv('MONGO_HOST', host)
+        self.port = port#os.getenv('MONGO_PORT', port)
         self.max_pool_size = max_pool_size
         self.document_class = dict
         self.tz_aware = True
