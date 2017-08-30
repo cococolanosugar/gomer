@@ -1,5 +1,4 @@
 gomer
 =====
 
-you don't have to know!
-you know eggs!
+a django project to explain how to use ocm(object collection mapping) lib. 
